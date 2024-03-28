@@ -11,3 +11,4 @@ torchaudio==2.2.0
 torchvision==0.17.0
 wget==3.2
 zipp==3.4.1
+sox

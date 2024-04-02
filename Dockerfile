@@ -31,9 +31,9 @@ RUN git clone https://github.com/Arashi0987/ast.git
 WORKDIR /app/ast
 
 # Install Python dependencies
+RUN pip install -r requirements.txt
 RUN pip install gradio
-RUN pip install --ignore-installed -r requirements.txt
-
+#RUN pip install --ignore-installed numpy==1.20.3
 RUN wget https://www.dropbox.com/s/cv4knew8mvbrnvq/audioset_0.4593.pth -o /app/ast/pretrained_models/audio_mdl.pth
 
 # Set the entrypoint

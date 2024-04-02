@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     sox \
     libsox-dev \
+    git-lfs \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Python 3.9 as default

@@ -11,7 +11,7 @@ services:
     shm_size: 8gb
     volumes:
     #  - /home/arashi/work/ast:/app/ast
-      -  /home/arashi/work/ast_files:/ast_files
+      -  /home/arashi/work/ast_files:/app/ast/sample_audio
     ports:
       - 7777:7860
     environment:

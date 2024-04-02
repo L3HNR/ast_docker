@@ -11,7 +11,7 @@ services:
     shm_size: 8gb
     volumes:
     #  - /home/arashi/work/ast:/app/ast
-      - .sample_audio:/app/ast/sample_audio
+      - ./audio_samples:/app/ast/ausio_samples
       - ./pretrained_models:/app/ast/pretrained_models
     ports:
       - 7777:7860

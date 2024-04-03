@@ -4,9 +4,9 @@ services:
   ast:
     container_name: ast
     image: ast
-    #build:
-    #  context: .
-    #  dockerfile: Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
     runtime: nvidia
     shm_size: 8gb
     volumes:

@@ -8,6 +8,7 @@ Requirements to run AST Docker:
 
 <p align="center"><img src="https://github.com/L3HNR/ast_docker/blob/master/ast_gradio.png?raw=true" alt="AST Webui"/></p>
 
+By Default the container will be hosted on port 7777 of whatever computer you're running it on, so you can access it in browser either by {the ip of the hosting computer}:7777 or you can port forward the port to your localhost with something like VScode and access it from localhost:7777 or 0.0.0.0:7777
 
 Enter the relative paths for the the following files in their respective field:
  - The .csv Label file 
@@ -20,6 +21,7 @@ Please note that you need to put these file in their respective folders( eg. lab
  Click Get predictions to output predictions
  
  Logs of predictions should be saved under ./logs/{audio_sample filename without extension}/{audio_sample filename}.log
+
 
 # AST: Audio Spectrogram Transformer  
  - [News](#News)

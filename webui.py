@@ -62,4 +62,4 @@ with gr.Blocks() as demo:
     logs = gr.Textbox(label="Python Logs")
     demo.load(read_logs, None, logs, every=5)
 # Launch the Gradio interface
-demo.launch(server_name="0.0.0.0", server_port=7860, share=False)
+demo.launch(server_name="0.0.0.0", server_port=7777, share=False)

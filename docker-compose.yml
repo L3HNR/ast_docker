@@ -14,7 +14,7 @@ services:
       - ./audio_samples:/app/ast/ausio_samples
       - ./pretrained_models:/app/ast/pretrained_models
     ports:
-      - 7777:7860
+      - 7777:7777
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
     stdin_open: true

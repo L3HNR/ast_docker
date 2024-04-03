@@ -1,3 +1,25 @@
+Requirements to run AST Docker:
+ - Linux Environment
+ - Cuda Capable Nvidia gpu with appropriate drivers: 
+	 - check this link to make sure your gpu is cuda capable: https://developer.nvidia.com/cuda-gpus
+	 - I'm running Nvidia 535.129.03 as my driver version
+ - CUDA ver 12.2
+ - Docker compose >= 1.29.2
+
+<p align="center"><img src="https://github.com/L3HNR/ast_docker/blob/master/ast_gradio.png?raw=true" alt="AST Webui" width="300"/></p>
+
+
+Enter the relative paths for the the following files in their respective field:
+ - The .csv Label file 
+ - The .pth Model file
+ - The audio file (I've tested with .mp3 and .flac but others probably work as well)
+
+Please note that you need to put these file in their respective folders( eg. label_csvs, pretrained_models, and audio_samples) because these are the only directories being specifically passed through to the docker container
+ 
+ Click Load Model (can see the output from the python logs at the bottom to confirm that its loaded)
+ Click Get predictions to output predictions
+ 
+ Logs of predictions should be saved under ./logs/{audio_sample filename without extension}/{audio_sample filename}.log
 
 # AST: Audio Spectrogram Transformer  
  - [News](#News)

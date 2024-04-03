@@ -91,28 +91,22 @@ Example inputs for the following functions:
 label_csv = './egs/audioset/data/class_labels_indices.csv'
 checkpoint_path = './pretrained_models/audio_mdl.pth'
 audio_sample = './sample_audios/sample_audio2.mp3'
-
+'''
 
 # Assume each input spectrogram has 1024 time frames
 def load_model(checkpoint_path, input_tdim=1024):
-    ast_mdl = ASTModelVis(label_dim=527, input_tdim=input_tdim, imagenet_pretrain=False, audioset_pretrain=False)
-    print(f'[*INFO] load checkpoint: {checkpoint_path}')
-    checkpoint = torch.load(checkpoint_path, map_location='cuda')
-    audio_model = torch.nn.DataParallel(ast_mdl, device_ids=[0])
-    audio_model.load_state_dict(checkpoint)
-    audio_model = audio_model.to(torch.device("cuda:0"))
-    audio_model.eval()
-    return audio_model
-'''
-def load_model(checkpoint_path, input_tdim=1024):
-    ast_mdl = ASTModelVis(label_dim=527, input_tdim=input_tdim, imagenet_pretrain=False, audioset_pretrain=False)
-    print(f'[*INFO] load checkpoint: {checkpoint_path}')
-    checkpoint = torch.load(checkpoint_path, map_location='cuda')
-    audio_model = torch.nn.DataParallel(ast_mdl, device_ids=[0])
-    audio_model.load_state_dict(checkpoint)
-    audio_model = audio_model.to(torch.device("cuda:0"))
-    audio_model.eval()
-    return audio_model
+    try:
+        ast_mdl = ASTModelVis(label_dim=527, input_tdim=input_tdim, imagenet_pretrain=False, audioset_pretrain=False)
+        print(f'[*INFO] load checkpoint: {checkpoint_path}')
+        checkpoint = torch.load(checkpoint_path, map_location='cuda')
+        audio_model = torch.nn.DataParallel(ast_mdl, device_ids=[0])
+        audio_model.load_state_dict(checkpoint)
+        audio_model = audio_model.to(torch.device("cuda:0"))
+        audio_model.eval()
+        return audio_model
+    except Exception as e:
+        print("Model not loaded correctly; An error occurred:", e)
+        return None
 
 '''
 Example use: 
@@ -122,34 +116,46 @@ audio_model = load_model(checkpoint_path)
 """## Step 3. Load an audio and predict the sound class.
 By default we test one sample from another dataset (VGGSound) that has not been seen during the model training.
 """
+import os
+from pathlib import Path
+
 def get_predictions(audio_model, label_csv, audio_sample, input_tdim=1024):
-    
-    # Load the AudioSet label set
-    labels = load_label(label_csv)
-    
-    if os.path.exists('./sample_audios') == False:
-      os.mkdir('./sample_audios')
+    try:
+        # Load the AudioSet label set
+        labels = load_label(label_csv)
+        if os.path.exists('./sample_audios') == False:
+            os.mkdir('./sample_audios')
+            
+        feats = make_features(audio_sample, mel_bins=128) # shape(1024, 128)
+        feats_data = feats.expand(1, input_tdim, 128) # reshape the feature
+        feats_data = feats_data.to(torch.device("cuda:0"))
+        
+        # Make the prediction
+        with torch.no_grad():
+            with autocast():
+                output = audio_model.forward(feats_data)
+                output = torch.sigmoid(output)
+        result_output = output.data.cpu().numpy()[0]
+        sorted_indexes = np.argsort(result_output)[::-1]
+        # Print audio tagging top probabilities
+        predictions = ""
+        for k in range(10):
+            prediction = '- {}: {:.4f}\n'.format(np.array(labels)[sorted_indexes[k]], result_output[sorted_indexes[k]])
+            predictions += prediction
 
-    #wget.download(sample_audio_path, './sample_audios/sample_audio2.flac')
-    feats = make_features(audio_sample, mel_bins=128)           # shape(1024, 128)
+        # Write predictions to a log file
+        audio_filename = Path(audio_sample).stem  # Get the filename without extension
+        log_dir = Path('./logs') / audio_filename
+        log_dir.mkdir(parents=True, exist_ok=True)  # Create the directory if it doesn't exist
+        log_file = log_dir / f"{audio_filename}.log"
+        with open(log_file, 'w', encoding='utf-8') as f:
+            f.write(predictions)
 
-    feats_data = feats.expand(1, input_tdim, 128)           # reshape the feature
-    feats_data = feats_data.to(torch.device("cuda:0"))
+        return predictions
 
-    # Make the prediction
-    with torch.no_grad():
-      with autocast():
-        output = audio_model.forward(feats_data)
-        output = torch.sigmoid(output)
-    result_output = output.data.cpu().numpy()[0]
-    sorted_indexes = np.argsort(result_output)[::-1]
-
-    # Print audio tagging top probabilities
-    predictions = ""
-    for k in range(10):
-        prediction = '- {}: {:.4f}\n'.format(np.array(labels)[sorted_indexes[k]], result_output[sorted_indexes[k]])
-        predictions += prediction
-    return predictions
+    except Exception as e:
+        print("Prediction not generated correctly; Try double checking your files\nAn error occurred:", e)
+        return None
 '''
 Example Usage:
 predictions = get_predictions(audio_model, label_csv, audio_sample)

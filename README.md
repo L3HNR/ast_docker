@@ -6,7 +6,7 @@ Requirements to run AST Docker:
  - CUDA ver 12.2
  - Docker compose >= 1.29.2
 
-<p align="center"><img src="https://github.com/L3HNR/ast_docker/blob/master/ast_gradio.png?raw=true" alt="AST Webui" width="300"/></p>
+<p align="center"><img src="https://github.com/L3HNR/ast_docker/blob/master/ast_gradio.png?raw=true" alt="AST Webui"/></p>
 
 
 Enter the relative paths for the the following files in their respective field:
